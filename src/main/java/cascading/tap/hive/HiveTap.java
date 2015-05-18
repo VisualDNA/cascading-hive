@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
-
 import cascading.CascadingException;
 import cascading.flow.hadoop.util.HadoopUtil;
 import cascading.property.AppProps;
@@ -33,6 +32,7 @@ import cascading.scheme.Scheme;
 import cascading.tap.SinkMode;
 import cascading.tap.TapException;
 import cascading.tap.hadoop.Hfs;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -403,6 +403,10 @@ public class HiveTap extends Hfs
       Table table = metaStoreClient.getTable( tableDescriptor.getDatabaseName(),
         tableDescriptor.getTableName() );
       String path = table.getSd().getLocation();
+      String[] partitionKeys = tableDescriptor.getPartitionKeys();
+      if(null != partitionKeys)
+          for (String partitionKey: partitionKeys)
+              path = path + "/*";
       setStringPath( path );
       }
     catch( MetaException exception )
